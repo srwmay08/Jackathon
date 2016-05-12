@@ -9,6 +9,7 @@
 	var bodyParser = require('body-parser');
 	var cookieParser = require('cookie-parser');
 	var expressSession = require('express-session');
+	var uuid = require('uuid');
 
 	var config = require('./config.js');
 
@@ -30,7 +31,9 @@
 
 	var Question = mongoose.model("Question", {
 		text: String,
-		username: String
+		username: String,
+		qID: String,
+		date: String
 	});
 
 	app.get("/", function (req, res) {
@@ -47,7 +50,7 @@
 			res.send("[]");
 			return;
 		}
-		Question.find({}, "text username", function (err, data) {
+		Question.find({}, "text username qID date", function (err, data) {
 			if (err) {
 				res.send("[]");
 				return;
@@ -68,7 +71,9 @@
 		}
 		var question = new Question({
 			text: req.body.newQuestion,
-			username: req.session.username
+			username: req.session.username,
+			qID: uuid.v4(),
+			date: new Date()
 		});
 		question.save(function (err) {
 			if (err) {
