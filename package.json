@@ -10,6 +10,7 @@
     "express-session": "^1.13.0",
     "mongoose": "^4.4.16",
     "react": "^15.0.1",
+    "react-bootstrap": "^0.29.4",
     "react-dom": "^15.0.1"
   },
   "devDependencies": {
