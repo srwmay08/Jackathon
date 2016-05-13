@@ -8,4 +8,4 @@ var QuestionSchema = new Schema({
 		date: String,
 });
 
-mongoose.model("Question", QuestionSchema);
+module.exports = mongoose.model("Question", QuestionSchema);

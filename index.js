@@ -1,4 +1,5 @@
-;(function () {
+;
+(function () {
 	"use strict";
 
 	var PORT = 3000;
@@ -9,17 +10,20 @@
 	var bodyParser = require('body-parser');
 	var cookieParser = require('cookie-parser');
 	var expressSession = require('express-session');
-  	var uuid = require('node-uuid');
-	
-	var Comment = mongoose.model("Comment");
-	
-	var Question = mongoose.model("Question");
+	var uuid = require('node-uuid');
+	var mongoose = require('mongoose');
+	var Router = require('react-router').Router
+	var Route = require('react-router').Route
+	var Link = require('react-router').Link
+
+	var Comment = require('./Comment.js')
+	var Question = require('./Question.js');
 
 	var config = require('./config.js');
 
 	var app = express();
 
-	var mongoose = require('mongoose');
+
 	mongoose.connect('mongodb://localhost');
 
 	app.use(bodyParser.json());
@@ -55,7 +59,7 @@
 			res.send(JSON.stringify(data));
 		});
 	});
-	
+
 	app.get("/comments", function (req, res) {
 		res.send("Comments");
 	});
@@ -109,15 +113,15 @@
 			logInUser(
 				req.body.username,
 				req.body.password,
-				function(err, data) {
+				function (err, data) {
 					if (err) {
 						console.log("THERE WAS AN ERROR WITH YOUR USER");
 						res.redirect("/login");
 						return;
 					}
-				req.session.username = req.body.username;
-				res.redirect("/");
-				return;
+					req.session.username = req.body.username;
+					res.redirect("/");
+					return;
 				}
 			);
 		}
@@ -157,9 +161,9 @@
 			}
 		}
 	});
-	
+
 	app.get('/commment', function (req, res) {
-		
+
 	});
 
 	app.use(express.static('public'));
