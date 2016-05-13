@@ -9,7 +9,7 @@
 	var bodyParser = require('body-parser');
 	var cookieParser = require('cookie-parser');
 	var expressSession = require('express-session');
-	var uuid = require('uuid');
+  var uuid = require('node-uuid');
 
 	var config = require('./config.js');
 

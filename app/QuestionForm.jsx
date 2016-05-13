@@ -1,4 +1,5 @@
 var React = require('react');
+var Bootstrap =  require('react-bootstrap');
 
 var QuestionForm = React.createClass({
 	submit: function(evt) {
@@ -20,7 +21,7 @@ var QuestionForm = React.createClass({
 		return (
 			<form onSubmit={this.submit}>
 				<input type="text" name="msg" id="msg"></input>
-				<input type="submit" value="Send"></input>
+				<input type="submit" value="Send" class="btn btn-default"></input>
 			</form>
 		);
 	}

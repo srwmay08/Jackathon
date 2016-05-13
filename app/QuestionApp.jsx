@@ -1,4 +1,5 @@
 var React = require("react");
+var Bootstrap =  require('react-bootstrap');
 var Question = require("./Question.jsx");
 var QuestionForm = require('./QuestionForm.jsx');
 
