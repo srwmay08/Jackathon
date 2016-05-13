@@ -1,4 +1,5 @@
-;(function () {
+;
+(function () {
 	"use strict";
 
 	var PORT = 3000;
@@ -9,7 +10,7 @@
 	var bodyParser = require('body-parser');
 	var cookieParser = require('cookie-parser');
 	var expressSession = require('express-session');
-  var uuid = require('node-uuid');
+	var uuid = require('node-uuid');
 
 	var config = require('./config.js');
 
@@ -33,7 +34,15 @@
 		text: String,
 		username: String,
 		qID: String,
-		date: String
+		date: String,
+		comments: Array
+	});
+
+	var Comment = mongoose.model("Comment", {
+		text: String,
+		username: String,
+		cID: String,
+		date: String,
 	});
 
 	app.get("/", function (req, res) {
@@ -73,7 +82,8 @@
 			text: req.body.newQuestion,
 			username: req.session.username,
 			qID: uuid.v4(),
-			date: new Date()
+			date: new Date(),
+			comments: []
 		});
 		question.save(function (err) {
 			if (err) {
@@ -109,15 +119,15 @@
 			logInUser(
 				req.body.username,
 				req.body.password,
-				function(err, data) {
+				function (err, data) {
 					if (err) {
 						console.log("THERE WAS AN ERROR WITH YOUR USER");
 						res.redirect("/login");
 						return;
 					}
-				req.session.username = req.body.username;
-				res.redirect("/");
-				return;
+					req.session.username = req.body.username;
+					res.redirect("/");
+					return;
 				}
 			);
 		}
@@ -141,6 +151,46 @@
 		});
 
 	}
+	//ADD NEW COMMENTS
+	app.get('/comment', function (req, res) {
+		if (!req.session.username) {
+			res.send("[]");
+			return;
+		}
+		Comment.find({}, "text username qID date", function (err, data) {
+			if (err) {
+				res.send("[]");
+				return;
+			}
+			res.send(JSON.stringify(data));
+		});
+	});
+
+	app.post('/comment', function (req, res) {
+		if (!req.session.username) {
+			res.send("error");
+			return;
+		}
+
+		if (!req.body.newComment) {
+			res.send("error");
+			return;
+		}
+		var comment = new comment({
+			text: req.body.newComment,
+			username: req.session.username,
+			cID: uuid.v4(),
+			date: new Date(),
+		});
+		comment.save(function (err) {
+			if (err) {
+				res.send(err);
+				return;
+			}
+			res.send("success");
+		});
+	});
+
 	//ADD NEW USER
 	app.get('/create', function (req, res) {
 		res.sendFile(__dirname + '/public/create.html');
