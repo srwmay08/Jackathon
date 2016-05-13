@@ -9,7 +9,11 @@
 	var bodyParser = require('body-parser');
 	var cookieParser = require('cookie-parser');
 	var expressSession = require('express-session');
-  var uuid = require('node-uuid');
+  	var uuid = require('node-uuid');
+	
+	var Comment = mongoose.model("Comment");
+	
+	var Question = mongoose.model("Question");
 
 	var config = require('./config.js');
 
@@ -29,13 +33,6 @@
 		saveUninitialized: true
 	}));
 
-	var Question = mongoose.model("Question", {
-		text: String,
-		username: String,
-		qID: String,
-		date: String
-	});
-
 	app.get("/", function (req, res) {
 		if (!req.session.username) {
 			res.redirect("/login");
@@ -50,13 +47,17 @@
 			res.send("[]");
 			return;
 		}
-		Question.find({}, "text username qID date", function (err, data) {
+		Question.find({}, "text username date", function (err, data) {
 			if (err) {
 				res.send("[]");
 				return;
 			}
 			res.send(JSON.stringify(data));
 		});
+	});
+	
+	app.get("/comments", function (req, res) {
+		res.send("Comments");
 	});
 
 	app.post("/Questions", function (req, res) {
@@ -72,7 +73,6 @@
 		var question = new Question({
 			text: req.body.newQuestion,
 			username: req.session.username,
-			qID: uuid.v4(),
 			date: new Date()
 		});
 		question.save(function (err) {
@@ -156,6 +156,10 @@
 				res.send("Passwords don't match");
 			}
 		}
+	});
+	
+	app.get('/commment', function (req, res) {
+		
 	});
 
 	app.use(express.static('public'));
