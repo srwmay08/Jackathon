@@ -8,11 +8,12 @@ var QuestionApp = React.createClass({
 		var Questions = this.state.Questions;
 		var QuestionHTML = [];
 		for(var i = 0; i < Questions.length; i++){
-			QuestionHTML.push(<Question key={i} data={Questions[i]} />);
+			QuestionHTML.push(<Question key={i} data={Questions[i]} />).reverse;
 		}
+		QuestionHTML.reverse();
 		return (<div>
-			{QuestionHTML}
 			<QuestionForm getQuestions={this.getQuestions}/>
+			{QuestionHTML}
 		</div>);
 	},
 	getInitialState: function(){
