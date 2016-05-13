@@ -21,7 +21,7 @@ var QuestionForm = React.createClass({
 		return (
 			<form onSubmit={this.submit}>
 				<input type="text" name="msg" id="msg"></input>
-				<input type="submit" value="Send" class="btn btn-default"></input>
+				<input type="submit" value="Send" className="btn btn-default"></input>
 			</form>
 		);
 	}
