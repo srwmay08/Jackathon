@@ -5,7 +5,7 @@ var QuestionApp = require('./QuestionApp.jsx');
 var Router = require('react-router').Router
 var Route = require('react-router').Route
 var Link = require('react-router').Link
-var Comments = require ('./Comments.jsx');
+var Comments = require ('./CommentsApp.jsx');
 
 ReactDom.render((
 	<Router>

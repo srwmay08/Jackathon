@@ -1,7 +1,7 @@
 var React = require("react");
 var Bootstrap =  require('react-bootstrap');
-var Question = require("./Question.jsx");
-var QuestionForm = require('./QuestionForm.jsx');
+var Comment = require("./Comments.jsx");
+var CommentsForm = require('./CommentsForm.jsx');
 
 var CommentsApp = React.createClass({
 	render: function() {
@@ -12,7 +12,7 @@ var CommentsApp = React.createClass({
 		}
 		QuestionHTML.reverse();
 		return (<div>
-			<Comments getComments={this.getComments}/>
+			<CommentsFrom getComments={this.getComments}/>
 			{CommentsHTML}
 		</div>);
 	},

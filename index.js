@@ -60,9 +60,25 @@
 		});
 	});
 
+	// QUESTION AND QUESTION'S COMMENTS GET
+	
 	app.get("/comments", function (req, res) {
-		res.send("Comments");
+//		if (!req.session.username) {
+//			res.send("[]");
+//			return;
+//		}
+		Question.find({_id: req.query.question}, "text username date", function(err, data) {
+			if (err) {
+				res.send();
+				return;
+			}
+			console.log(typeof(data));
+			console.log(data);
+			res.send(data[0].text);
+		});
+		Comment.find({})
 	});
+	
 
 	app.post("/Questions", function (req, res) {
 		if (!req.session.username) {
