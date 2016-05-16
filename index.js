@@ -11,12 +11,19 @@
 	var cookieParser = require('cookie-parser');
 	var expressSession = require('express-session');
 	var uuid = require('node-uuid');
+	var mongoose = require('mongoose');
+	var Router = require('react-router').Router
+	var Route = require('react-router').Route
+	var Link = require('react-router').Link
+
+	var Comment = require('./Comment.js')
+	var Question = require('./Question.js');
 
 	var config = require('./config.js');
 
 	var app = express();
 
-	var mongoose = require('mongoose');
+
 	mongoose.connect('mongodb://localhost');
 
 	app.use(bodyParser.json());
@@ -59,7 +66,7 @@
 			res.send("[]");
 			return;
 		}
-		Question.find({}, "text username qID date", function (err, data) {
+		Question.find({}, "text username date", function (err, data) {
 			if (err) {
 				res.send("[]");
 				return;
@@ -67,6 +74,43 @@
 			res.send(JSON.stringify(data));
 		});
 	});
+
+	// QUESTION AND QUESTION'S COMMENTS GET
+
+	app.get("/comments", function (req, res) {
+		if (!req.session.username) {
+			res.send("[targetquestionerror]");
+			return;
+		}
+		Question.findOne({_id: req.query.question}, "text username date", function (err, data) {
+			if (err) {
+				res.send("[targetquestionfinderror]");
+				return;
+			}
+			console.log(data);
+			console.log(typeof (data));
+			res.send(JSON.stringify(data.text));
+		});
+	});
+
+//	app.get("/targetquestion", function (req, res) {
+//		
+//	});
+//	
+//	app.get("/targetcomments", function (req, res) {
+//		if (!req.session.username) {
+//			res.send("[targetcommentserror]");
+//			return;
+//		}
+//		Comment.find({}, "text username date", function (err, data) {
+//			if (err) {
+//				res.send("[targetcommentfinderror]");
+//				return;
+//			}
+//			res.send(JSON.stringify(data));
+//		});
+//	});
+
 
 	app.post("/Questions", function (req, res) {
 		if (!req.session.username) {
@@ -206,6 +250,10 @@
 				res.send("Passwords don't match");
 			}
 		}
+	});
+
+	app.get('/commment', function (req, res) {
+
 	});
 
 	app.use(express.static('public'));
