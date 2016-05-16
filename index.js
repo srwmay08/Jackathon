@@ -73,7 +73,7 @@
 				return;
 			}
 			console.log(data);
-			console.log(typeof (data));
+			console.log(typeof(data));
 			res.send(JSON.stringify(data));
 		});
 	});
@@ -113,6 +113,31 @@
 			qID: uuid.v4(),
 			date: new Date(),
 			comments: []
+		});
+		question.save(function (err) {
+			if (err) {
+				res.send(err);
+				return;
+			}
+			res.send("success");
+		});
+	});
+	
+	app.post("/comments", function (req, res) {
+		if (!req.session.username) {
+			res.send("error");
+			return;
+		}
+
+		if (!req.body.newQuestion) {
+			res.send("error");
+			return;
+		}
+		var comment = new Comment({
+			text: req.body.newQuestion,
+			username: req.session.username,
+			qID: {_id: req.query.question},
+			date: new Date(),
 		});
 		question.save(function (err) {
 			if (err) {

@@ -4,13 +4,13 @@ var Bootstrap = require('react-bootstrap');
 var CommentsForm = React.createClass({
     submit: function(evt) {
         evt.preventDefault();
-        var newQuestion = $('#msg').val();
+        var newComment = $('#msg').val();
         var that = this;
-        $.post('/Questions', {
-            newQuestion: newQuestion
+        $.post('/Comments', {
+            newComment: newComment
         }, function(response) {
             if (response == "success") {
-                that.props.getQuestions();
+                that.props.getComments();
                 $('#msg').val('');
             }
         }, 'text');

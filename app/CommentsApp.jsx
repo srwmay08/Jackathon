@@ -1,11 +1,17 @@
 var React = require("react");
 var Bootstrap =  require('react-bootstrap');
-var Comment = require("./Comments.jsx");
+var Comments = require("./Comments.jsx");
 var CommentsForm = require('./CommentsForm.jsx');
+var Question = require('./Question.jsx');
 
 var CommentsApp = React.createClass({
 	render: function() {
 		var Comments = this.state.Comments;
+		var question = this.state.getQuestion;
+		var q = null;
+		if(question) {
+			q = <Question data={question} />
+		}
 		var CommentsHTML = [];
 		for(var i = 0; i < Comments.length; i++){
 			CommentsHTML.push(<Comments key={i} data={Comments[i]} />).reverse;
@@ -13,6 +19,7 @@ var CommentsApp = React.createClass({
 		CommentsHTML.reverse();
 		return (
 		<div>
+			{q}
 			{this.props.params.id}
 			<CommentsForm getComments={this.getComments}/>
 			{CommentsHTML}
@@ -20,29 +27,22 @@ var CommentsApp = React.createClass({
 	},
 	getInitialState: function(){
 		var stateObj = {
-			Comments: []
+			Comments: [],
+			getQuestion: null
 		};
 		return stateObj;
 	},
 	getQuestion: function() {
 		var that = this;
-		$.get('/comments', function(result) {
+		$.get('/comments', {question: this.props.params.id}, function(result) {
+			console.log(result);
 			that.setState({
 				getQuestion: result
 			});
 		}, 'json');
 	},
-	getComments: function() {
-		var that = this;
-		$.get('/targetcomments', function(result) {
-			that.setState({
-				Comments: result
-			});
-		}, 'json');
-	},
 	componentDidMount: function() {
 		this.getQuestion();
-		this.getComments();
 	}
 });
 
