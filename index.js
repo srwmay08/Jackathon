@@ -37,21 +37,6 @@
 		saveUninitialized: true
 	}));
 
-	var Question = mongoose.model("Question", {
-		text: String,
-		username: String,
-		qID: String,
-		date: String,
-		comments: Array
-	});
-
-	var Comment = mongoose.model("Comment", {
-		text: String,
-		username: String,
-		cID: String,
-		date: String,
-	});
-
 	app.get("/", function (req, res) {
 		if (!req.session.username) {
 			res.redirect("/login");
@@ -89,7 +74,7 @@
 			}
 			console.log(data);
 			console.log(typeof (data));
-			res.send(JSON.stringify(data.text));
+			res.send(JSON.stringify(data));
 		});
 	});
 
