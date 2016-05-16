@@ -5,10 +5,10 @@ var QuestionApp = require('./QuestionApp.jsx');
 var Router = require('react-router').Router
 var Route = require('react-router').Route
 var Link = require('react-router').Link
-var Comments = require ('./CommentsApp.jsx');
+var CommentsApp = require ('./CommentsApp.jsx');
 
 ReactDom.render((
 	<Router>
     	<Route path="/" component={QuestionApp} />
-		<Route path="/comments" component={Comments} />
+		<Route path="/comments/:id" component={CommentsApp} />
   	</Router>), document.getElementById('app'));
