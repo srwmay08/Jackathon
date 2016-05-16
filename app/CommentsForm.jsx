@@ -24,7 +24,7 @@ var CommentsForm = React.createClass({
                             <input type="text" name="msg" id="msg" className="form-control"></input>
                         </div>
                         <div className="col-sm-3">
-                            <input type="submit" value="Post Question" className="btn btn-default"></input>
+                            <input type="submit" value="Post Comments" className="btn btn-default"></input>
                         </div>
                     </div>
                 </form>

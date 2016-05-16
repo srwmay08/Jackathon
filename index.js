@@ -61,24 +61,41 @@
 	});
 
 	// QUESTION AND QUESTION'S COMMENTS GET
-	
+
 	app.get("/comments", function (req, res) {
-//		if (!req.session.username) {
-//			res.send("[]");
-//			return;
-//		}
-		Question.find({_id: req.query.question}, "text username date", function(err, data) {
+		if (!req.session.username) {
+			res.send("[targetquestionerror]");
+			return;
+		}
+		Question.findOne({_id: req.query.question}, "text username date", function (err, data) {
 			if (err) {
-				res.send();
+				res.send("[targetquestionfinderror]");
 				return;
 			}
-			console.log(typeof(data));
 			console.log(data);
-			res.send(data[0].text);
+			console.log(typeof (data));
+			res.send(JSON.stringify(data.text));
 		});
-		Comment.find({})
 	});
-	
+
+//	app.get("/targetquestion", function (req, res) {
+//		
+//	});
+//	
+//	app.get("/targetcomments", function (req, res) {
+//		if (!req.session.username) {
+//			res.send("[targetcommentserror]");
+//			return;
+//		}
+//		Comment.find({}, "text username date", function (err, data) {
+//			if (err) {
+//				res.send("[targetcommentfinderror]");
+//				return;
+//			}
+//			res.send(JSON.stringify(data));
+//		});
+//	});
+
 
 	app.post("/Questions", function (req, res) {
 		if (!req.session.username) {

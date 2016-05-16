@@ -5,14 +5,16 @@ var CommentsForm = require('./CommentsForm.jsx');
 
 var CommentsApp = React.createClass({
 	render: function() {
-		var Comments = this.state.Questions;
+		var Comments = this.state.Comments;
 		var CommentsHTML = [];
-		for(var i = 0; i < Questions.length; i++){
+		for(var i = 0; i < Comments.length; i++){
 			CommentsHTML.push(<Comments key={i} data={Comments[i]} />).reverse;
 		}
-		QuestionHTML.reverse();
-		return (<div>
-			<CommentsFrom getComments={this.getComments}/>
+		CommentsHTML.reverse();
+		return (
+		<div>
+			{this.props.params.id}
+			<CommentsForm getComments={this.getComments}/>
 			{CommentsHTML}
 		</div>);
 	},
@@ -22,15 +24,24 @@ var CommentsApp = React.createClass({
 		};
 		return stateObj;
 	},
+	getQuestion: function() {
+		var that = this;
+		$.get('/comments', function(result) {
+			that.setState({
+				getQuestion: result
+			});
+		}, 'json');
+	},
 	getComments: function() {
 		var that = this;
-		$.get('/Comments', function(result) {
+		$.get('/targetcomments', function(result) {
 			that.setState({
 				Comments: result
 			});
 		}, 'json');
 	},
 	componentDidMount: function() {
+		this.getQuestion();
 		this.getComments();
 	}
 });
