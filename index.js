@@ -74,7 +74,7 @@
 			}
 			console.log(data);
 			console.log(typeof (data));
-			res.send(JSON.stringify(data.text));
+			res.send(JSON.stringify(data));
 		});
 	});
 
@@ -110,7 +110,9 @@
 		var question = new Question({
 			text: req.body.newQuestion,
 			username: req.session.username,
-			date: new Date()
+			qID: uuid.v4(),
+			date: new Date(),
+			comments: []
 		});
 		question.save(function (err) {
 			if (err) {
@@ -178,6 +180,46 @@
 		});
 
 	}
+	//ADD NEW COMMENTS
+	app.get('/comment', function (req, res) {
+		if (!req.session.username) {
+			res.send("[]");
+			return;
+		}
+		Comment.find({}, "text username qID date", function (err, data) {
+			if (err) {
+				res.send("[]");
+				return;
+			}
+			res.send(JSON.stringify(data));
+		});
+	});
+
+	app.post('/comment', function (req, res) {
+		if (!req.session.username) {
+			res.send("error");
+			return;
+		}
+
+		if (!req.body.newComment) {
+			res.send("error");
+			return;
+		}
+		var comment = new comment({
+			text: req.body.newComment,
+			username: req.session.username,
+			cID: uuid.v4(),
+			date: new Date(),
+		});
+		comment.save(function (err) {
+			if (err) {
+				res.send(err);
+				return;
+			}
+			res.send("success");
+		});
+	});
+
 	//ADD NEW USER
 	app.get('/create', function (req, res) {
 		res.sendFile(__dirname + '/public/create.html');
