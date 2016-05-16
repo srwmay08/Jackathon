@@ -1,4 +1,5 @@
-;(function () {
+;
+(function () {
 	"use strict";
 
 	var PORT = 3000;
@@ -9,13 +10,20 @@
 	var bodyParser = require('body-parser');
 	var cookieParser = require('cookie-parser');
 	var expressSession = require('express-session');
-  var uuid = require('node-uuid');
+	var uuid = require('node-uuid');
+	var mongoose = require('mongoose');
+	var Router = require('react-router').Router
+	var Route = require('react-router').Route
+	var Link = require('react-router').Link
+
+	var Comment = require('./Comment.js')
+	var Question = require('./Question.js');
 
 	var config = require('./config.js');
 
 	var app = express();
 
-	var mongoose = require('mongoose');
+
 	mongoose.connect('mongodb://localhost');
 
 	app.use(bodyParser.json());
@@ -28,13 +36,6 @@
 		resave: true,
 		saveUninitialized: true
 	}));
-
-	var Question = mongoose.model("Question", {
-		text: String,
-		username: String,
-		qID: String,
-		date: String
-	});
 
 	app.get("/", function (req, res) {
 		if (!req.session.username) {
@@ -50,7 +51,7 @@
 			res.send("[]");
 			return;
 		}
-		Question.find({}, "text username qID date", function (err, data) {
+		Question.find({}, "text username date", function (err, data) {
 			if (err) {
 				res.send("[]");
 				return;
@@ -58,6 +59,26 @@
 			res.send(JSON.stringify(data));
 		});
 	});
+
+	// QUESTION AND QUESTION'S COMMENTS GET
+	
+	app.get("/comments", function (req, res) {
+//		if (!req.session.username) {
+//			res.send("[]");
+//			return;
+//		}
+		Question.find({_id: req.query.question}, "text username date", function(err, data) {
+			if (err) {
+				res.send();
+				return;
+			}
+			console.log(typeof(data));
+			console.log(data);
+			res.send(data[0].text);
+		});
+		Comment.find({})
+	});
+	
 
 	app.post("/Questions", function (req, res) {
 		if (!req.session.username) {
@@ -72,7 +93,6 @@
 		var question = new Question({
 			text: req.body.newQuestion,
 			username: req.session.username,
-			qID: uuid.v4(),
 			date: new Date()
 		});
 		question.save(function (err) {
@@ -109,15 +129,15 @@
 			logInUser(
 				req.body.username,
 				req.body.password,
-				function(err, data) {
+				function (err, data) {
 					if (err) {
 						console.log("THERE WAS AN ERROR WITH YOUR USER");
 						res.redirect("/login");
 						return;
 					}
-				req.session.username = req.body.username;
-				res.redirect("/");
-				return;
+					req.session.username = req.body.username;
+					res.redirect("/");
+					return;
 				}
 			);
 		}
@@ -156,6 +176,10 @@
 				res.send("Passwords don't match");
 			}
 		}
+	});
+
+	app.get('/commment', function (req, res) {
+
 	});
 
 	app.use(express.static('public'));
