@@ -9,4 +9,4 @@ var CommentSchema = new Schema({
 		date: String
 });
 
-mongoose.model("Comment", CommentSchema);
+module.exports = mongoose.model("Comment", CommentSchema);
