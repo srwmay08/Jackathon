@@ -7,13 +7,13 @@ var Question = require('./Question.jsx');
 var CommentsApp = React.createClass({
 	render: function() {
 		var question = this.state.getQuestion;
-		var q = null;
+		var questionParams = null;
 		if(question) {
-			q = <Question data={question} />
+			questionParams = <Question data={question} />
 		}
 		return (
 		<div>
-			{q}
+			{questionParams}
 			{this.props.params.id}
 			<CommentsForm getComments={this.getComments}/>
 		</div>);
