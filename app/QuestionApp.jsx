@@ -14,13 +14,14 @@ var QuestionApp = React.createClass({
 			QuestionHTML.push(<Question key={i} data={Questions[i]} />).reverse;
 		}
 		QuestionHTML.reverse();
-		// RENDERS THE QUESTION FORM AND ALL PREVIOUSLY SUBMITTED QUESTIONS 
+		// RENDERS THE QUESTION FORM AND ALL PREVIOUSLY SUBMITTED QUESTIONS
 		return (<div>
 			<QuestionForm getQuestions={this.getQuestions}/>
+			<br />
 			{QuestionHTML}
 		</div>);
 	},
-	
+
 	// SETS THE STATE OF QUESTIONS TO AN EMPTY ARRAY
 	getInitialState: function(){
 		var stateObj = {
@@ -28,7 +29,7 @@ var QuestionApp = React.createClass({
 		};
 		return stateObj;
 	},
-	
+
 	// JQUERY TO GET ALL QUESTIONS WHEN THE PAGE LOADS AND WHEN getQUESTIONS IS CALLED
 	getQuestions: function() {
 		var that = this;
@@ -39,7 +40,7 @@ var QuestionApp = React.createClass({
 			});
 		}, 'json');
 	},
-	
+
 	// WHEN THE PAGE MOUNTS, TELLS REACT TO GETQUESTIONS
 	componentDidMount: function() {
 		this.getQuestions();

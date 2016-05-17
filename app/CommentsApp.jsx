@@ -26,12 +26,13 @@ var CommentsApp = React.createClass({
 		return (
 		<div>
 			{q}
-			{this.props.params.id}
+			
 			<CommentsForm qID={this.props.params.id} getComments={this.getComments}/>
+			<br />
 			{CommentHTML}
 		</div>);
 	},
-	
+
 	// SET INITIAL STATE OF QUESTION AND ANY COMMENTS
 	getInitialState: function(){
 		var stateObj = {
@@ -50,7 +51,7 @@ var CommentsApp = React.createClass({
 			});
 		}, 'json');
 	},
-	
+
 	//GETS ALL COMMENTS IF ANY, WHEN THE PAGE LOADS, USING THE SAME QUESTION PARAMETER PASSED INTO THE URL AND DOWN INTO THE PAGE
 	getComments: function() {
 		var that = this;
@@ -61,7 +62,7 @@ var CommentsApp = React.createClass({
 			});
 		}, 'json');
 	},
-	
+
 	// WHEN THE PAGE MOUNTS, GETS QUESTION AND COMMENTS
 	componentDidMount: function() {
 		this.getQuestion();
