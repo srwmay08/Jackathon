@@ -12,8 +12,9 @@ var CommentsApp = React.createClass({
 		var q = null;
 		var qc = null;
 		var CommentHTML = [];
+
 		if(question) {
-			q = <Question data={question} />
+			questionParams = <Question data={question} />
 		}
 		for(var i = 0; i < qcomment.length; i++){
 			CommentHTML.push(<Comments key={i} data={qcomment[i]} />);
@@ -21,7 +22,7 @@ var CommentsApp = React.createClass({
 		CommentHTML.reverse();
 		return (
 		<div>
-			{q}
+			{questionParams}
 			{this.props.params.id}
 			<CommentsForm qID={this.props.params.id} getComments={this.getComments}/>
 			{CommentHTML}
