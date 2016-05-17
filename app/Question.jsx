@@ -2,6 +2,7 @@ var React = require('react');
 var Bootstrap = require('react-bootstrap');
 var Link = require('react-router').Link 
 
+// REACT COMPONENT THAT DISPLAYS EACH QUESTION AND FORMATS THEM USING BOOTSTRAP
 var Question = React.createClass({
     render: function() {
         return <div className="panel panel-default">

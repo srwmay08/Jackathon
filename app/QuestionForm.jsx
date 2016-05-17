@@ -1,6 +1,7 @@
 var React = require('react');
 var Bootstrap = require('react-bootstrap');
 
+// QUESTIONS FORM THAT HANDLES USER INPUT, ON SUBMIT SAVES VALUE TO newQuestion, AND REPOPULATES IF POST IS SUCCESSFUL
 var QuestionForm = React.createClass({
     submit: function(evt) {
         evt.preventDefault();
@@ -15,6 +16,8 @@ var QuestionForm = React.createClass({
             }
         }, 'text');
     },
+	
+	// REACT RENDERING OF QUESTIONS INPUT FORM
     render: function() {
         return (
             <div className="row">

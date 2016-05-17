@@ -6,24 +6,25 @@
 
 	var fs = require('fs');
 
+	// NODE USES EXPRESS, EXPRESS SESSION, BODYPARSER, COOKIEPARSER, AND MONGOOSE
+	
 	var express = require('express');
 	var bodyParser = require('body-parser');
 	var cookieParser = require('cookie-parser');
 	var expressSession = require('express-session');
 	var uuid = require('node-uuid');
 	var mongoose = require('mongoose');
-	var Router = require('react-router').Router
-	var Route = require('react-router').Route
-	var Link = require('react-router').Link
 
+	// MONGOOSE SCHEMA FOR QUESTIONS AND COMMENTS
 	var Comment = require('./Comment.js')
 	var Question = require('./Question.js');
 
+	// CONFIG WITH SECRET AND PORT
 	var config = require('./config.js');
 
 	var app = express();
 
-
+	// COOL MIDDLEWARE STUFFS
 	mongoose.connect('mongodb://localhost');
 
 	app.use(bodyParser.json());
@@ -36,7 +37,8 @@
 		resave: true,
 		saveUninitialized: true
 	}));
-
+	
+	// OUR ROOT GET, REUTNRS THE INDEX.HTML PAGE AND BASE LAYOUT FOR REACT
 	app.get("/", function (req, res) {
 		if (!req.session.username) {
 			res.redirect("/login");
@@ -45,12 +47,15 @@
 
 		res.sendFile(__dirname + "/public/index.html");
 	});
-
+	
+	// GET AND POST QUESTIONS
+	// GET CHECKS TO SEE IF THERE IS AN ACTIVE SESSION USERNAME
 	app.get("/Questions", function (req, res) {
 		if (!req.session.username) {
 			res.send("[]");
 			return;
 		}
+		// IF THERE IS AN ACTIVE SESSION, FINDS ALL ACTIVE QUESTIONS AND SENDS JSON DATA TO THE FRONTEND
 		Question.find({}, "text username date", function (err, data) {
 			if (err) {
 				res.send("[]");
@@ -59,14 +64,45 @@
 			res.send(JSON.stringify(data));
 		});
 	});
+	// POST CHECKS TO SEE IF THERE IS AN ACTIVE SESSION USERNAME
+	app.post("/Questions", function (req, res) {
+		if (!req.session.username) {
+			res.send("error");
+			return;
+		}
+		// CHECKS TO SEE IF THERE IS A VALUE IN THE NEWQUESTION BOX
+		if (!req.body.newQuestion) {
+			res.send("error");
+			return;
+		}
+		// DATABASE CONSTRUCTOR THAT PASSES IN THE TEXT FIELD, SESSION USERNAME, AND THE CURRENT TIME
+		var question = new Question({
+			text: req.body.newQuestion,
+			username: req.session.username,
+			qID: uuid.v4(),
+			date: new Date(),
+			comments: []
+		});
+		// SAVES THE NEW CONSTRUCTOR TO THE DATABASE
+		question.save(function (err) {
+			if (err) {
+				res.send(err);
+				return;
+			}
+			res.send("success");
+		});
+	});
+	
 
-	// QUESTION AND QUESTION'S COMMENTS GET
-
+	// GET QUESTION WHEN SELECTED AND QUESTION'S COMMENTS GET AND POST
+	// GET TAKES THE USER TO A NEW COMMENTS PAGE WHERE USER CAN REPLY TO QUESTIONS.
+	// GET REQUIRES SESSION USERNAME
 	app.get("/comments", function (req, res) {
 		if (!req.session.username) {
 			res.send("[targetquestionerror]");
 			return;
 		}
+		// GET FINDS THE ONE QUESTION SELECTED AND POPULATES THAT INFORMATION AT THE TOP OF THE COMMENTS PAGE
 		Question.findOne({_id: req.query.question}, "text username date", function (err, data) {
 			if (err) {
 				res.send("[targetquestionfinderror]");
@@ -77,85 +113,15 @@
 			res.send(JSON.stringify(data));
 		});
 	});
-
-//	app.get("/targetquestion", function (req, res) {
-//		
-//	});
-//	
-//	app.get("/targetcomments", function (req, res) {
-//		if (!req.session.username) {
-//			res.send("[targetcommentserror]");
-//			return;
-//		}
-//		Comment.find({}, "text username date", function (err, data) {
-//			if (err) {
-//				res.send("[targetcommentfinderror]");
-//				return;
-//			}
-//			res.send(JSON.stringify(data));
-//		});
-//	});
-
-
-	app.post("/Questions", function (req, res) {
-		if (!req.session.username) {
-			res.send("error");
-			return;
-		}
-
-		if (!req.body.newQuestion) {
-			res.send("error");
-			return;
-		}
-		var question = new Question({
-			text: req.body.newQuestion,
-			username: req.session.username,
-			qID: uuid.v4(),
-			date: new Date(),
-			comments: []
-		});
-		question.save(function (err) {
-			if (err) {
-				res.send(err);
-				return;
-			}
-			res.send("success");
-		});
-	});
 	
-	app.post("/comments", function (req, res) {
-		if (!req.session.username) {
-			res.send("error");
-			return;
-		}
-
-		if (!req.body.newQuestion) {
-			res.send("error");
-			return;
-		}
-		var comment = new Comment({
-			text: req.body.newQuestion,
-			username: req.session.username,
-			qID: {_id: req.query.question},
-			date: new Date(),
-		});
-		question.save(function (err) {
-			if (err) {
-				res.send(err);
-				return;
-			}
-			res.send("success");
-		});
-	});
-	
-	
-	// GET COMMENTS AND POST COMMENTS
-	
+	//GET COMMENTS AND POST COMMENTS
+	//CHECKS TO MAKE SURE THERE IS A SESSION USERNAME
 	app.get("/qcomments", function (req, res) {
 		if (!req.session.username) {
 			res.send("[targetquestionerror]");
 			return;
 		}
+		//SEARCHES COMMMENT DATABASE FOR THE SELECTED QUESTION ID AND RETURNS ALL VALUES MATCHING
 		Comment.find({qID: req.query.qID}, "text qID username date", function (err, data) {
 			if (err) {
 				res.send("[targetquestionfinderror]");
@@ -164,17 +130,18 @@
 			res.send(JSON.stringify(data));
 		});
 	});
-
+	//POSTS NEW COMMENTS TO A SPECIFIC QUESTION PAGE, USING THE QID AS THE QUESTION IDENTIFIER FOR FUTURE SEARCHES
 	app.post("/qcomments", function (req, res) {
 		if (!req.session.username) {
 			res.send("session error");
 			return;
 		}
-
+		//REQUIRES THERE TO BE A VALUE IN THE TEXT FIELD PRIOR TO SUBMISSION
 		if (!req.body.newComment) {
 			res.send("comment error");
 			return;
 		}
+		// DATABASE CONSTRUCTOR THAT PASSES IN THE QUESTION ID, TEXT FIELD, SESSION USERNAME, AND THE CURRENT TIME
 		var comment = new Comment({
 			text: req.body.newComment,
 			username: req.session.username,
@@ -182,6 +149,7 @@
 			date: new Date(),
 		});
 		console.log(comment);
+		//STORES DATA THE THE COMMENT ENTITY IN THE DATABASE
 		comment.save(function (err) {
 			if (err) {
 				res.send("save error");
@@ -190,12 +158,8 @@
 			res.send("success");
 		});
 	});
-	//	function QuestionElement(username, Question){
-	//		this.username = username;
-	//		this.Question = Question
-	//	}
-
-
+	
+	// GET AND POST USER LOGIN
 
 	app.get("/login", function (req, res) {
 		res.sendFile(__dirname + '/public/login.html');
@@ -209,7 +173,7 @@
 			password: pass
 		}, "username", callback);
 	}
-
+	// WHEN LOGGING IN, CHECKS THE DATABASE FOR MATCHING USERNAME AND PASSWORD, SETS SESSION TO CURRENT USERNAME
 	app.post("/login", function (req, res) {
 		if (req.body.username && req.body.password) {
 			logInUser(
@@ -228,12 +192,12 @@
 			);
 		}
 	});
-
+	// MONGOOSE MODEL TO STORE USERNAME AND PASSWORD
 	var User = mongoose.model("User", {
 		username: String,
 		password: String
 	});
-
+	// CREATES A NEW USER FUNCTION
 	function createNewUser(user, pass) {
 		var user = new User({
 			username: user,
@@ -247,51 +211,12 @@
 		});
 
 	}
-	//ADD NEW COMMENTS
-	app.get('/comment', function (req, res) {
-		if (!req.session.username) {
-			res.send("[]");
-			return;
-		}
-		Comment.find({}, "text username qID date", function (err, data) {
-			if (err) {
-				res.send("[]");
-				return;
-			}
-			res.send(JSON.stringify(data));
-		});
-	});
 
-	app.post('/comment', function (req, res) {
-		if (!req.session.username) {
-			res.send("error");
-			return;
-		}
-
-		if (!req.body.newComment) {
-			res.send("error");
-			return;
-		}
-		var comment = new comment({
-			text: req.body.newComment,
-			username: req.session.username,
-			cID: uuid.v4(),
-			date: new Date(),
-		});
-		comment.save(function (err) {
-			if (err) {
-				res.send(err);
-				return;
-			}
-			res.send("success");
-		});
-	});
-
-	//ADD NEW USER
+	//ADD NEW USER GET AND POST 
 	app.get('/create', function (req, res) {
 		res.sendFile(__dirname + '/public/create.html');
 	});
-
+	// VALIDATES USERNAME AND PASSWORD WHEN CREATING A NEW USER, THEN REDIRECTS TO LOGIN IF CREATION WAS SUCCESFUL
 	app.post('/create', function (req, res) {
 		if (req.body.username && req.body.password && req.body.pwconfirm) {
 			if (req.body.password == req.body.pwconfirm) {
@@ -303,18 +228,15 @@
 			}
 		}
 	});
-
-	app.get('/commment', function (req, res) {
-
-	});
-
+	// EXPRESS PUBLIC FOLDER SERVER
 	app.use(express.static('public'));
 
+	// 404 ERRORS AND SUCH
 	app.use(function (req, res, next) {
 		res.status(404);
 		res.send("File not found");
 	});
-
+	// APP LISTENER TO SET THE PORT AND LOGS THE START OF THE SERVER
 	app.listen(PORT, function () {
 		console.log("server started on port " + PORT);
 	});

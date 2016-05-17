@@ -1,6 +1,7 @@
 var React = require('react');
 var Bootstrap = require('react-bootstrap');
 
+// REACT COMPONENT THAT RENDERS THE COMMENTS FORM AND ALLOWS USERS TO POST COMMENTS TO A SPECFIC QUESTION
 var CommentsForm = React.createClass({
     submit: function(evt) {
         evt.preventDefault();
@@ -16,6 +17,8 @@ var CommentsForm = React.createClass({
             }
         }, 'text');
     },
+	
+// RENDERS THE COMMENT FORM
     render: function() {
         return (
             <div className="row">
