@@ -6,8 +6,9 @@ var CommentsForm = React.createClass({
         evt.preventDefault();
         var newComment = $('#msg').val();
         var that = this;
-        $.post('/Comments', {
-            newComment: newComment
+        $.post('/qcomments', {
+            newComment: newComment,
+			qID: this.props.qID
         }, function(response) {
             if (response == "success") {
                 that.props.getComments();

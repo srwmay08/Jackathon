@@ -7,20 +7,29 @@ var Question = require('./Question.jsx');
 var CommentsApp = React.createClass({
 	render: function() {
 		var question = this.state.getQuestion;
+		var qcomment = this.state.getComments;
+		console.log(qcomment);
 		var q = null;
+		var qc = null;
+		var CommentHTML = [];
 		if(question) {
 			q = <Question data={question} />
 		}
+		for(var i = 0; i < qcomment.length; i++){
+			CommentHTML.push(<Comments key={i} data={qcomment[i]} />);
+		}
+		CommentHTML.reverse();
 		return (
 		<div>
 			{q}
 			{this.props.params.id}
-			<CommentsForm getComments={this.getComments}/>
+			<CommentsForm qID={this.props.params.id} getComments={this.getComments}/>
+			{CommentHTML}
 		</div>);
 	},
 	getInitialState: function(){
 		var stateObj = {
-			Comments: [],
+			getComments: [],
 			getQuestion: null
 		};
 		return stateObj;
@@ -34,8 +43,18 @@ var CommentsApp = React.createClass({
 			});
 		}, 'json');
 	},
+	getComments: function() {
+		var that = this;
+		$.get('/qcomments', {qID: this.props.params.id}, function(result) {
+			console.log(result);
+			that.setState({
+				getComments: result
+			});
+		}, 'json');
+	},
 	componentDidMount: function() {
 		this.getQuestion();
+		this.getComments();
 	}
 });
 

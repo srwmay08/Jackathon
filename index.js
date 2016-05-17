@@ -147,7 +147,49 @@
 			res.send("success");
 		});
 	});
+	
+	
+	// GET COMMENTS AND POST COMMENTS
+	
+	app.get("/qcomments", function (req, res) {
+		if (!req.session.username) {
+			res.send("[targetquestionerror]");
+			return;
+		}
+		Comment.find({qID: req.query.qID}, "text qID username date", function (err, data) {
+			if (err) {
+				res.send("[targetquestionfinderror]");
+				return;
+			}
+			res.send(JSON.stringify(data));
+		});
+	});
 
+	app.post("/qcomments", function (req, res) {
+		if (!req.session.username) {
+			res.send("session error");
+			return;
+		}
+
+		if (!req.body.newComment) {
+			res.send("comment error");
+			return;
+		}
+		var comment = new Comment({
+			text: req.body.newComment,
+			username: req.session.username,
+			qID: req.body.qID, 
+			date: new Date(),
+		});
+		console.log(comment);
+		comment.save(function (err) {
+			if (err) {
+				res.send("save error");
+				return;
+			}
+			res.send("success");
+		});
+	});
 	//	function QuestionElement(username, Question){
 	//		this.username = username;
 	//		this.Question = Question
