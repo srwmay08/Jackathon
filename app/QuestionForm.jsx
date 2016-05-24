@@ -3,19 +3,19 @@ var Bootstrap = require('react-bootstrap');
 
 var QuestionForm = React.createClass({
     submit: function(evt) {
-        evt.preventDefault();
-        var newQuestion = $('#msg').val();
+        evt.preventDefault(); //* Here we make sure that even if the event fails, the page continues to load
+        var newQuestion = $('#msg').val(); //* The entire following section ensures that a new question can be created and pushed through without needing to be in real time.
         var that = this;
         $.post('/Questions', {
             newQuestion: newQuestion
         }, function(response) {
-            if (response == "success") {
+            if (response == "success") { //* Here getQuestions pulls all the questions previously asked as well as the new question. getQuestions(); was defined in our Question App 
                 that.props.getQuestions();
                 $('#msg').val('');
             }
         }, 'text');
     },
-    render: function() {
+    render: function() { //* Below is the bootstrap to create the question form. 
         return (
             <div className="row">
                 <form onSubmit={this.submit}>
